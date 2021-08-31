@@ -122,6 +122,7 @@ const Notes = () => {
             selectedNoteIds={selectedNoteIds}
             setSelectedNoteIds={setSelectedNoteIds}
             notes={notes}
+            onDelete={() => setShowDeleteAlert(true)}
           />
         </>
       ) : (
