@@ -1,6 +1,19 @@
 import React from "react";
 
-import { Checkbox } from "neetoui";
+import { Avatar, Checkbox, Badge, Tooltip } from "neetoui";
+
+const getBadgeColor = text => {
+  switch (text) {
+    case "Internal":
+      return "blue";
+    case "Agile Workflow":
+      return "green";
+    case "Bug":
+      return "red";
+    default:
+      return "blue";
+  }
+};
 
 export default function NoteTable({
   selectedNoteIds,
@@ -9,7 +22,7 @@ export default function NoteTable({
 }) {
   return (
     <div className="w-full px-4">
-      <table className="nui-table nui-table--checkbox">
+      <table className="nui-table nui-table--checkbox nui-table--actions">
         <thead>
           <tr>
             <th>
@@ -28,7 +41,12 @@ export default function NoteTable({
               />
             </th>
             <th className="text-left">Title</th>
-            <th className="text-left">Description</th>
+            <th className="text-center">Description</th>
+            <th className="text-left">Tags</th>
+            <th className="text-left">Created Date</th>
+            <th className="text-left">Due Date</th>
+            <th className="text-left">Contact</th>
+            <th className="text-left"></th>
           </tr>
         </thead>
         <tbody>
@@ -61,6 +79,26 @@ export default function NoteTable({
                 </div>
               </td>
               <td>{note.description}</td>
+              <td>
+                <Badge color={getBadgeColor(note.tags[0])}>
+                  {note.tags[0]}
+                </Badge>
+              </td>
+              <td>{note.createdDate}</td>
+              <td>{note.dueDate || "--"}</td>
+              <td>
+                <Avatar size={36} contact={{ name: note.contact }} />
+              </td>
+              <td>
+                <div className="flex space-x-3">
+                  <Tooltip content="Edit" position="bottom">
+                    <i className="ri-pencil-line ri-lg h-2" />
+                  </Tooltip>
+                  <Tooltip content="Delete" position="bottom">
+                    <i className="ri-delete-bin-line ri-lg h-2" />
+                  </Tooltip>
+                </div>
+              </td>
             </tr>
           ))}
         </tbody>

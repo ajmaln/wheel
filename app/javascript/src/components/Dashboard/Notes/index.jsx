@@ -4,12 +4,47 @@ import EmptyNotesListImage from "images/EmptyNotesList";
 import { Button, PageLoader } from "neetoui";
 import { Header, SubHeader } from "neetoui/layouts";
 
-import notesApi from "apis/notes";
 import EmptyState from "components/Common/EmptyState";
 
 import DeleteAlert from "./DeleteAlert";
 import NewNotePane from "./NewNotePane";
 import NoteTable from "./NoteTable";
+
+const DATA = [
+  {
+    id: 1,
+    title: "My Task",
+    description: "Complete the notes list UI",
+    tags: ["Internal"],
+    createdDate: "Apr 20, 2021",
+    dueDate: "Apr 30, 2021",
+    contact: "Ajmal Noushad"
+  },
+  {
+    id: 2,
+    title: "My Second Task",
+    description: "Complete the notes list UI with different tag",
+    tags: ["Agile Workflow"],
+    createdDate: "Apr 20, 2021",
+    dueDate: "Apr 30, 2021",
+    contact: "Ajmal Noushad"
+  },
+  {
+    id: 3,
+    title: "My Third Task",
+    description: "Complete the notes list UI with bug tag, but ",
+    tags: ["Bug"],
+    createdDate: "Apr 20, 2021",
+    dueDate: "",
+    contact: "Ajmal Noushad"
+  }
+];
+
+const SORT_BY_OPTIONS = [
+  { label: "Title", value: "title" },
+  { label: "Created Date", value: "createdDate" },
+  { label: "Due Date", value: "dueDate" }
+];
 
 const Notes = () => {
   const [loading, setLoading] = useState(true);
@@ -26,7 +61,12 @@ const Notes = () => {
   const fetchNotes = async () => {
     try {
       setLoading(true);
-      const response = await notesApi.fetch();
+      // Simulate API loading delay
+      const getNotes = () =>
+        new Promise(resolve =>
+          setTimeout(() => resolve({ data: { notes: DATA } }), 500)
+        );
+      const response = await getNotes();
       setNotes(response.data.notes);
     } catch (error) {
       logger.error(error);
@@ -62,6 +102,21 @@ const Notes = () => {
               onClick: () => setShowDeleteAlert(true),
               disabled: !selectedNoteIds.length
             }}
+            sortProps={{
+              options: SORT_BY_OPTIONS,
+              onClick: () => {},
+              sortBy: {
+                column: SORT_BY_OPTIONS[0].value,
+                direction: "desc"
+              }
+            }}
+            paginationProps={{
+              count: 100,
+              pageNo: 2,
+              pageSize: 25,
+              navigate: () => {}
+            }}
+            toggleFilter={() => {}}
           />
           <NoteTable
             selectedNoteIds={selectedNoteIds}
