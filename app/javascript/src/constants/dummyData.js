@@ -20,7 +20,8 @@ export const NOTES = [
   {
     id: 3,
     title: "My Third Task",
-    description: "Complete the notes list UI with bug tag, but ",
+    description:
+      "Complete the notes list UI with bug tag, but without due date.",
     tags: "Bug",
     createdDate: "Apr 20, 2021",
     dueDate: "",
