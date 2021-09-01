@@ -6,6 +6,7 @@ import { Header, SubHeader } from "neetoui/layouts";
 
 import EmptyState from "components/Common/EmptyState";
 import { NOTES, SORT_BY_OPTIONS } from "constants/dummyData";
+import { useNotesDispatch, useNotesState } from "contexts/notes";
 
 import DeleteAlert from "./DeleteAlert";
 import NewNotePane from "./NewNotePane";
@@ -17,7 +18,10 @@ const Notes = () => {
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedNoteIds, setSelectedNoteIds] = useState([]);
-  const [notes, setNotes] = useState([]);
+  const [selectedNote, setSelectedNote] = useState({});
+
+  const { notes } = useNotesState();
+  const dispatch = useNotesDispatch();
 
   useEffect(() => {
     fetchNotes();
@@ -32,12 +36,35 @@ const Notes = () => {
           setTimeout(() => resolve({ data: { notes: NOTES } }), 500)
         );
       const response = await getNotes();
-      setNotes(response.data.notes);
+      dispatch({
+        type: "SET_NOTES",
+        payload: { notes: response.data.notes }
+      });
     } catch (error) {
       logger.error(error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const onEdit = note => {
+    setSelectedNote(note);
+    setShowNewNotePane(true);
+  };
+
+  const onDelete = note => {
+    setSelectedNote(note);
+    setShowDeleteAlert(true);
+  };
+
+  const onDeleteAlertClose = () => {
+    setSelectedNote({});
+    setShowDeleteAlert(false);
+  };
+
+  const onFormPaneClose = () => {
+    setSelectedNote({});
+    setShowNewNotePane(false);
   };
 
   if (loading) {
@@ -87,7 +114,8 @@ const Notes = () => {
             selectedNoteIds={selectedNoteIds}
             setSelectedNoteIds={setSelectedNoteIds}
             notes={notes}
-            onDelete={() => setShowDeleteAlert(true)}
+            onDelete={onDelete}
+            onEdit={onEdit}
           />
         </>
       ) : (
@@ -101,15 +129,11 @@ const Notes = () => {
       )}
       <NewNotePane
         showPane={showNewNotePane}
-        setShowPane={setShowNewNotePane}
-        fetchNotes={fetchNotes}
+        onClose={onFormPaneClose}
+        selectedNote={selectedNote}
       />
       {showDeleteAlert && (
-        <DeleteAlert
-          selectedNoteIds={selectedNoteIds}
-          onClose={() => setShowDeleteAlert(false)}
-          refetch={fetchNotes}
-        />
+        <DeleteAlert selectedNote={selectedNote} onClose={onDeleteAlertClose} />
       )}
     </>
   );

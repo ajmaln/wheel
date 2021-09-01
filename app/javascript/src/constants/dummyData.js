@@ -34,3 +34,14 @@ export const SORT_BY_OPTIONS = [
   { label: "Created Date", value: "createdDate" },
   { label: "Due Date", value: "dueDate" }
 ];
+
+export const TAG_OPTIONS = [
+  { value: "Internal", label: "Internal" },
+  { value: "Agile Workflow", label: "Agile Workflow" },
+  { value: "Bug", label: "Bug" }
+];
+
+export const CONTACT_OPTIONS = [
+  { value: "Karthik Menon", label: "Karthik Menon" },
+  { value: "Ajmal Noushad", label: "Ajmal Noushad" }
+];

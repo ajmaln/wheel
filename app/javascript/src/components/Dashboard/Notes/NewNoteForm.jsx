@@ -1,17 +1,59 @@
 import React from "react";
 
-import { Formik, Form } from "formik";
-import { Button } from "neetoui";
-import { Input, Textarea } from "neetoui/formik";
-import * as yup from "yup";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+import { Formik, Form, Field } from "formik";
+import { Button, DateInput, Toastr } from "neetoui";
+import { Input, Textarea, Select, Switch } from "neetoui/formik";
 
-import notesApi from "apis/notes";
+import { CONTACT_OPTIONS, TAG_OPTIONS } from "constants/dummyData";
+import formValidationSchemas from "constants/formValidationSchemas";
+import { useNotesDispatch } from "contexts/notes";
 
-export default function NewNoteForm({ onClose, refetch }) {
+dayjs.extend(customParseFormat);
+
+const getEditableNote = note => ({
+  ...note,
+  tags: getOption(note.tags),
+  contact: getOption(note.contact),
+  dueDate: dayjs(note.dueDate, "MMM DD, YYYY", true).toDate()
+});
+
+const getOption = value => ({ label: value, value });
+
+export default function NewNoteForm({ onClose, selectedNote }) {
+  const dispatch = useNotesDispatch();
+  const editableNote = selectedNote.id ? getEditableNote(selectedNote) : {};
   const handleSubmit = async values => {
+    const {
+      tags: { value: tags },
+      contact: { value: contact },
+      dueDate
+    } = values;
+    const note = {
+      ...values,
+      tags,
+      contact,
+      createdDate:
+        editableNote.createdDate || dayjs(new Date()).format("MMM DD, YYYY"),
+      dueDate: dueDate ? dayjs(dueDate).format("MMM DD, YYYY") : ""
+    };
     try {
-      await notesApi.create(values);
-      refetch();
+      if (selectedNote.id) {
+        dispatch({
+          type: "UPDATE_NOTE",
+          payload: { note }
+        });
+        Toastr.success("Note updated successfully!");
+      } else {
+        dispatch({
+          type: "ADD_NOTE",
+          payload: {
+            note
+          }
+        });
+        Toastr.success("Note added successfully!");
+      }
       onClose();
     } catch (err) {
       logger.error(err);
@@ -21,18 +63,63 @@ export default function NewNoteForm({ onClose, refetch }) {
     <Formik
       initialValues={{
         title: "",
-        description: ""
+        tags: null,
+        description: "",
+        contact: null,
+        addDueDateToNote: selectedNote.dueDate,
+        dueDate: null,
+        ...editableNote
       }}
       onSubmit={handleSubmit}
-      validationSchema={yup.object({
-        title: yup.string().required("Title is required"),
-        description: yup.string().required("Description is required")
-      })}
+      validationSchema={formValidationSchemas.newNoteForm}
     >
-      {({ isSubmitting }) => (
+      {({ isSubmitting, values }) => (
         <Form>
           <Input label="Title" name="title" className="mb-6" />
-          <Textarea label="Description" name="description" rows={8} />
+          <Select
+            label="Tags"
+            value={values.tags}
+            placeholder="Select an Option"
+            isDisabled={false}
+            isClearable={true}
+            isSearchable={true}
+            name="tags"
+            options={TAG_OPTIONS}
+            className="mb-6"
+          />
+          <Textarea
+            label="Description"
+            name="description"
+            rows={8}
+            className="mb-6"
+          />
+          <Select
+            label="Assigned Contact"
+            placeholder="Select an Option"
+            isDisabled={false}
+            isClearable={true}
+            isSearchable={true}
+            name="contact"
+            options={CONTACT_OPTIONS}
+            className="mb-6"
+          />
+          <div className="flex mb-6 justify-between">
+            <label htmlFor="addDueDateToNote">Add Due Date to Note</label>
+            <Switch name="addDueDateToNote" />
+          </div>
+          {values.addDueDateToNote && (
+            <Field name="dueDate">
+              {({ field: { name, value }, form }) => (
+                <DateInput
+                  minDate={selectedNote.id ? undefined : new Date()}
+                  label="Due Date"
+                  format="DD/MM/YYYY"
+                  value={value}
+                  onChange={newDate => form.setFieldValue(name, newDate)}
+                />
+              )}
+            </Field>
+          )}
           <div className="nui-pane__footer nui-pane__footer--absolute">
             <Button
               onClick={onClose}

@@ -19,11 +19,12 @@ export default function NoteTable({
   selectedNoteIds,
   setSelectedNoteIds,
   notes = [],
-  onDelete
+  onDelete,
+  onEdit
 }) {
   return (
     <div className="w-full px-4">
-      <table className="nui-table nui-table--checkbox nui-table--actions table-fixed">
+      <table className="nui-table nui-table--checkbox nui-table--actions nui-table--hover table-fixed">
         <thead>
           <tr>
             <th>
@@ -47,15 +48,11 @@ export default function NoteTable({
             <th className="text-center">Created Date</th>
             <th className="text-center">Due Date</th>
             <th className="text-center">Contact</th>
-            {/* <th className="text-left"></th> */}
           </tr>
         </thead>
         <tbody>
           {notes.map(note => (
-            <tr
-              key={note.id}
-              className="cursor-pointer bg-white hover:bg-gray-50"
-            >
+            <tr key={note.id}>
               <td>
                 <Checkbox
                   checked={selectedNoteIds.includes(note.id)}
@@ -75,9 +72,7 @@ export default function NoteTable({
                 />
               </td>
               <td>
-                <div className="flex flex-row items-center justify-start text-gray-900">
-                  {note.title}
-                </div>
+                <Button style="link" label={note.title} />
               </td>
               <td className="text-center truncate overflow-ellipsis w-32">
                 {note.description}
@@ -93,10 +88,18 @@ export default function NoteTable({
               <td>
                 <div className="flex space-x-3">
                   <Tooltip content="Edit" position="bottom">
-                    <Button style="icon" icon="ri-pencil-line" />
+                    <Button
+                      style="icon"
+                      icon="ri-pencil-line"
+                      onClick={() => onEdit(note)}
+                    />
                   </Tooltip>
                   <Tooltip content="Delete" position="bottom">
-                    <Button style="icon" icon="ri-delete-bin-line" />
+                    <Button
+                      style="icon"
+                      icon="ri-delete-bin-line"
+                      onClick={() => onDelete(note)}
+                    />
                   </Tooltip>
                 </div>
               </td>
