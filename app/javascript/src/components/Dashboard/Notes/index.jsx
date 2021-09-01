@@ -5,46 +5,11 @@ import { Button, PageLoader } from "neetoui";
 import { Header, SubHeader } from "neetoui/layouts";
 
 import EmptyState from "components/Common/EmptyState";
+import { NOTES, SORT_BY_OPTIONS } from "constants/dummyData";
 
 import DeleteAlert from "./DeleteAlert";
 import NewNotePane from "./NewNotePane";
 import NoteTable from "./NoteTable";
-
-const DATA = [
-  {
-    id: 1,
-    title: "My Task",
-    description: "Complete the notes list UI",
-    tags: ["Internal"],
-    createdDate: "Apr 20, 2021",
-    dueDate: "Apr 30, 2021",
-    contact: "Ajmal Noushad"
-  },
-  {
-    id: 2,
-    title: "My Second Task",
-    description: "Complete the notes list UI with different tag",
-    tags: ["Agile Workflow"],
-    createdDate: "Apr 20, 2021",
-    dueDate: "Apr 30, 2021",
-    contact: "Ajmal Noushad"
-  },
-  {
-    id: 3,
-    title: "My Third Task",
-    description: "Complete the notes list UI with bug tag, but ",
-    tags: ["Bug"],
-    createdDate: "Apr 20, 2021",
-    dueDate: "",
-    contact: "Ajmal Noushad"
-  }
-];
-
-const SORT_BY_OPTIONS = [
-  { label: "Title", value: "title" },
-  { label: "Created Date", value: "createdDate" },
-  { label: "Due Date", value: "dueDate" }
-];
 
 const Notes = () => {
   const [loading, setLoading] = useState(true);
@@ -64,7 +29,7 @@ const Notes = () => {
       // Simulate API loading delay
       const getNotes = () =>
         new Promise(resolve =>
-          setTimeout(() => resolve({ data: { notes: DATA } }), 500)
+          setTimeout(() => resolve({ data: { notes: NOTES } }), 500)
         );
       const response = await getNotes();
       setNotes(response.data.notes);
