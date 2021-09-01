@@ -1,36 +1,59 @@
 import React from "react";
 
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 import { Formik, Form, Field } from "formik";
-import { Button, DateInput } from "neetoui";
+import { Button, DateInput, Toastr } from "neetoui";
 import { Input, Textarea, Select, Switch } from "neetoui/formik";
 
-import notesApi from "apis/notes";
+import { CONTACT_OPTIONS, TAG_OPTIONS } from "constants/dummyData";
 import formValidationSchemas from "constants/formValidationSchemas";
+import { useNotesDispatch } from "contexts/notes";
 
-export const TAG_OPTIONS = [
-  { value: "Internal", label: "Internal" },
-  { value: "Agile Workflow", label: "Agile Workflow" },
-  { value: "Bug", label: "Bug" }
-];
+dayjs.extend(customParseFormat);
 
-export const CONTACT_OPTIONS = [
-  { value: "Karthik Menon", label: "Karthik Menon" },
-  { value: "Ajmal Noushad", label: "Ajmal Noushad" }
-];
+const getEditableNote = note => ({
+  ...note,
+  tags: getOption(note.tags),
+  contact: getOption(note.contact),
+  dueDate: dayjs(note.dueDate, "MMM DD, YYYY", true).toDate()
+});
 
-export default function NewNoteForm({ onClose, refetch }) {
+const getOption = value => ({ label: value, value });
+
+export default function NewNoteForm({ onClose, selectedNote }) {
+  const dispatch = useNotesDispatch();
+  const editableNote = selectedNote.id ? getEditableNote(selectedNote) : {};
   const handleSubmit = async values => {
     const {
       tags: { value: tags },
-      contact: { value: contact }
+      contact: { value: contact },
+      dueDate
     } = values;
+    const note = {
+      ...values,
+      tags,
+      contact,
+      createdDate:
+        editableNote.createdDate || dayjs(new Date()).format("MMM DD, YYYY"),
+      dueDate: dueDate ? dayjs(dueDate).format("MMM DD, YYYY") : ""
+    };
     try {
-      await notesApi.create({
-        ...values,
-        tags,
-        contact
-      });
-      refetch();
+      if (selectedNote.id) {
+        dispatch({
+          type: "UPDATE_NOTE",
+          payload: { note }
+        });
+        Toastr.success("Note updated successfully!");
+      } else {
+        dispatch({
+          type: "ADD_NOTE",
+          payload: {
+            note
+          }
+        });
+        Toastr.success("Note added successfully!");
+      }
       onClose();
     } catch (err) {
       logger.error(err);
@@ -43,8 +66,9 @@ export default function NewNoteForm({ onClose, refetch }) {
         tags: null,
         description: "",
         contact: null,
-        addDueDateToNote: false,
-        dueDate: new Date()
+        addDueDateToNote: selectedNote.dueDate,
+        dueDate: null,
+        ...editableNote
       }}
       onSubmit={handleSubmit}
       validationSchema={formValidationSchemas.newNoteForm}
@@ -85,15 +109,13 @@ export default function NewNoteForm({ onClose, refetch }) {
           </div>
           {values.addDueDateToNote && (
             <Field name="dueDate">
-              {({ field: { name, value, onChange } }) => (
+              {({ field: { name, value }, form }) => (
                 <DateInput
-                  minDate={new Date()}
+                  minDate={selectedNote.id ? undefined : new Date()}
                   label="Due Date"
                   format="DD/MM/YYYY"
                   value={value}
-                  onChange={newDate =>
-                    onChange({ target: { value: newDate, name } })
-                  }
+                  onChange={newDate => form.setFieldValue(name, newDate)}
                 />
               )}
             </Field>
