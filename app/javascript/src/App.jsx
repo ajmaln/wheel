@@ -1,6 +1,7 @@
 import React from "react";
 
 import { AuthProvider } from "contexts/auth";
+import { NotesProvider } from "contexts/notes";
 import { UserProvider } from "contexts/user";
 
 import Main from "./components/Main";
@@ -9,7 +10,9 @@ const App = props => {
   return (
     <AuthProvider>
       <UserProvider>
-        <Main {...props} />
+        <NotesProvider>
+          <Main {...props} />
+        </NotesProvider>
       </UserProvider>
     </AuthProvider>
   );

@@ -22,5 +22,24 @@ export default {
     firstName: Yup.string().required("Required"),
     lastName: Yup.string().required("Required"),
     password: Yup.string().required("Required")
+  }),
+  newNoteForm: Yup.object().shape({
+    contact: Yup.object()
+      .shape({
+        label: Yup.string().required("Contact is required"),
+        value: Yup.string().required("Contact is required")
+      })
+      .required("Contact is required")
+      .nullable(),
+    description: Yup.string().required("Description is required"),
+    dueDate: Yup.date(),
+    tags: Yup.object()
+      .shape({
+        label: Yup.string().required("Tags is required"),
+        value: Yup.string().required("Tags is required")
+      })
+      .required("Tags is required")
+      .nullable(),
+    title: Yup.string().required("Title is required")
   })
 };

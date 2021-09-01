@@ -1,15 +1,30 @@
 import React from "react";
 
-import { Checkbox } from "neetoui";
+import { Avatar, Checkbox, Badge, Tooltip, Button } from "neetoui";
+
+const getBadgeColor = text => {
+  switch (text) {
+    case "Internal":
+      return "blue";
+    case "Agile Workflow":
+      return "green";
+    case "Bug":
+      return "red";
+    default:
+      return "blue";
+  }
+};
 
 export default function NoteTable({
   selectedNoteIds,
   setSelectedNoteIds,
-  notes = []
+  notes = [],
+  onDelete,
+  onEdit
 }) {
   return (
     <div className="w-full px-4">
-      <table className="nui-table nui-table--checkbox">
+      <table className="nui-table nui-table--checkbox nui-table--actions nui-table--hover table-fixed">
         <thead>
           <tr>
             <th>
@@ -28,15 +43,16 @@ export default function NoteTable({
               />
             </th>
             <th className="text-left">Title</th>
-            <th className="text-left">Description</th>
+            <th className="text-center">Description</th>
+            <th className="text-center">Tags</th>
+            <th className="text-center">Created Date</th>
+            <th className="text-center">Due Date</th>
+            <th className="text-center">Contact</th>
           </tr>
         </thead>
         <tbody>
           {notes.map(note => (
-            <tr
-              key={note.id}
-              className={"cursor-pointer bg-white hover:bg-gray-50"}
-            >
+            <tr key={note.id}>
               <td>
                 <Checkbox
                   checked={selectedNoteIds.includes(note.id)}
@@ -56,11 +72,37 @@ export default function NoteTable({
                 />
               </td>
               <td>
-                <div className="flex flex-row items-center justify-start text-gray-900">
-                  {note.title}
+                <Button style="link" label={note.title} />
+              </td>
+              <td className="text-center truncate overflow-ellipsis w-32">
+                {note.description}
+              </td>
+              <td className="text-center">
+                <Badge color={getBadgeColor(note.tags)}>{note.tags}</Badge>
+              </td>
+              <td className="text-center">{note.createdDate}</td>
+              <td className="text-center">{note.dueDate || "--"}</td>
+              <td className="text-center flex justify-center">
+                <Avatar size={36} contact={{ name: note.contact }} />
+              </td>
+              <td>
+                <div className="flex space-x-3">
+                  <Tooltip content="Edit" position="bottom">
+                    <Button
+                      style="icon"
+                      icon="ri-pencil-line"
+                      onClick={() => onEdit(note)}
+                    />
+                  </Tooltip>
+                  <Tooltip content="Delete" position="bottom">
+                    <Button
+                      style="icon"
+                      icon="ri-delete-bin-line"
+                      onClick={() => onDelete(note)}
+                    />
+                  </Tooltip>
                 </div>
               </td>
-              <td>{note.description}</td>
             </tr>
           ))}
         </tbody>

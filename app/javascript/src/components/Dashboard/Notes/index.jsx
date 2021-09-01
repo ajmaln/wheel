@@ -4,8 +4,9 @@ import EmptyNotesListImage from "images/EmptyNotesList";
 import { Button, PageLoader } from "neetoui";
 import { Header, SubHeader } from "neetoui/layouts";
 
-import notesApi from "apis/notes";
 import EmptyState from "components/Common/EmptyState";
+import { NOTES, SORT_BY_OPTIONS } from "constants/dummyData";
+import { useNotesDispatch, useNotesState } from "contexts/notes";
 
 import DeleteAlert from "./DeleteAlert";
 import NewNotePane from "./NewNotePane";
@@ -17,7 +18,10 @@ const Notes = () => {
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedNoteIds, setSelectedNoteIds] = useState([]);
-  const [notes, setNotes] = useState([]);
+  const [selectedNote, setSelectedNote] = useState({});
+
+  const { notes } = useNotesState();
+  const dispatch = useNotesDispatch();
 
   useEffect(() => {
     fetchNotes();
@@ -26,13 +30,41 @@ const Notes = () => {
   const fetchNotes = async () => {
     try {
       setLoading(true);
-      const response = await notesApi.fetch();
-      setNotes(response.data.notes);
+      // Simulate API loading delay
+      const getNotes = () =>
+        new Promise(resolve =>
+          setTimeout(() => resolve({ data: { notes: NOTES } }), 500)
+        );
+      const response = await getNotes();
+      dispatch({
+        type: "SET_NOTES",
+        payload: { notes: response.data.notes }
+      });
     } catch (error) {
       logger.error(error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const onEdit = note => {
+    setSelectedNote(note);
+    setShowNewNotePane(true);
+  };
+
+  const onDelete = note => {
+    setSelectedNote(note);
+    setShowDeleteAlert(true);
+  };
+
+  const onDeleteAlertClose = () => {
+    setSelectedNote({});
+    setShowDeleteAlert(false);
+  };
+
+  const onFormPaneClose = () => {
+    setSelectedNote({});
+    setShowNewNotePane(false);
   };
 
   if (loading) {
@@ -62,11 +94,28 @@ const Notes = () => {
               onClick: () => setShowDeleteAlert(true),
               disabled: !selectedNoteIds.length
             }}
+            sortProps={{
+              options: SORT_BY_OPTIONS,
+              onClick: () => {},
+              sortBy: {
+                column: SORT_BY_OPTIONS[0].value,
+                direction: "desc"
+              }
+            }}
+            paginationProps={{
+              count: 100,
+              pageNo: 2,
+              pageSize: 25,
+              navigate: () => {}
+            }}
+            toggleFilter={() => {}}
           />
           <NoteTable
             selectedNoteIds={selectedNoteIds}
             setSelectedNoteIds={setSelectedNoteIds}
             notes={notes}
+            onDelete={onDelete}
+            onEdit={onEdit}
           />
         </>
       ) : (
@@ -80,15 +129,11 @@ const Notes = () => {
       )}
       <NewNotePane
         showPane={showNewNotePane}
-        setShowPane={setShowNewNotePane}
-        fetchNotes={fetchNotes}
+        onClose={onFormPaneClose}
+        selectedNote={selectedNote}
       />
       {showDeleteAlert && (
-        <DeleteAlert
-          selectedNoteIds={selectedNoteIds}
-          onClose={() => setShowDeleteAlert(false)}
-          refetch={fetchNotes}
-        />
+        <DeleteAlert selectedNote={selectedNote} onClose={onDeleteAlertClose} />
       )}
     </>
   );
