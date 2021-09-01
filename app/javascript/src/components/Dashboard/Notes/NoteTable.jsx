@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Avatar, Checkbox, Badge, Tooltip } from "neetoui";
+import { Avatar, Checkbox, Badge, Tooltip, Button } from "neetoui";
 
 const getBadgeColor = text => {
   switch (text) {
@@ -81,9 +81,7 @@ export default function NoteTable({
               </td>
               <td>{note.description}</td>
               <td>
-                <Badge color={getBadgeColor(note.tags[0])}>
-                  {note.tags[0]}
-                </Badge>
+                <Badge color={getBadgeColor(note.tags)}>{note.tags}</Badge>
               </td>
               <td>{note.createdDate}</td>
               <td>{note.dueDate || "--"}</td>
@@ -93,13 +91,10 @@ export default function NoteTable({
               <td>
                 <div className="flex space-x-3">
                   <Tooltip content="Edit" position="bottom">
-                    <i className="ri-pencil-line ri-lg h-2" />
+                    <Button style="icon" icon="ri-pencil-line" />
                   </Tooltip>
                   <Tooltip content="Delete" position="bottom">
-                    <i
-                      className="ri-delete-bin-line ri-lg h-2"
-                      onClick={onDelete}
-                    />
+                    <Button style="icon" icon="ri-delete-bin-line" />
                   </Tooltip>
                 </div>
               </td>
