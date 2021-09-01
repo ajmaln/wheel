@@ -18,7 +18,8 @@ const getBadgeColor = text => {
 export default function NoteTable({
   selectedNoteIds,
   setSelectedNoteIds,
-  notes = []
+  notes = [],
+  onDelete
 }) {
   return (
     <div className="w-full px-4">
@@ -95,7 +96,7 @@ export default function NoteTable({
                     <Button style="icon" icon="ri-pencil-line" />
                   </Tooltip>
                   <Tooltip content="Delete" position="bottom">
-                    <Button style="icon" icon="ri-delete-bin-line" />
+                    <Button style="icon" icon="ri-delete-bin-line" onClick={onDelete} />
                   </Tooltip>
                 </div>
               </td>
