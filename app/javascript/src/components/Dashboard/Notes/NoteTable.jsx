@@ -23,7 +23,7 @@ export default function NoteTable({
 }) {
   return (
     <div className="w-full px-4">
-      <table className="nui-table nui-table--checkbox nui-table--actions">
+      <table className="nui-table nui-table--checkbox nui-table--actions table-fixed">
         <thead>
           <tr>
             <th>
@@ -43,18 +43,18 @@ export default function NoteTable({
             </th>
             <th className="text-left">Title</th>
             <th className="text-center">Description</th>
-            <th className="text-left">Tags</th>
-            <th className="text-left">Created Date</th>
-            <th className="text-left">Due Date</th>
-            <th className="text-left">Contact</th>
-            <th className="text-left"></th>
+            <th className="text-center">Tags</th>
+            <th className="text-center">Created Date</th>
+            <th className="text-center">Due Date</th>
+            <th className="text-center">Contact</th>
+            {/* <th className="text-left"></th> */}
           </tr>
         </thead>
         <tbody>
           {notes.map(note => (
             <tr
               key={note.id}
-              className={"cursor-pointer bg-white hover:bg-gray-50"}
+              className="cursor-pointer bg-white hover:bg-gray-50"
             >
               <td>
                 <Checkbox
@@ -79,13 +79,15 @@ export default function NoteTable({
                   {note.title}
                 </div>
               </td>
-              <td>{note.description}</td>
-              <td>
+              <td className="text-center truncate overflow-ellipsis w-32">
+                {note.description}
+              </td>
+              <td className="text-center">
                 <Badge color={getBadgeColor(note.tags)}>{note.tags}</Badge>
               </td>
-              <td>{note.createdDate}</td>
-              <td>{note.dueDate || "--"}</td>
-              <td>
+              <td className="text-center">{note.createdDate}</td>
+              <td className="text-center">{note.dueDate || "--"}</td>
+              <td className="text-center flex justify-center">
                 <Avatar size={36} contact={{ name: note.contact }} />
               </td>
               <td>
