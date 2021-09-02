@@ -64,3 +64,9 @@ export const CONTACTS = [
     addToBasecamp: true
   }
 ];
+
+export const DEPARTMENT_OPTIONS = [
+  { value: "Engineering", label: "Engineering" },
+  { value: "HR", label: "HR" },
+  { value: "Marketing", label: "Marketing" }
+];
