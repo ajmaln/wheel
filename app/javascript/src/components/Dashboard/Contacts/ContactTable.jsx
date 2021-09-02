@@ -9,7 +9,6 @@ export default function ContactTable({
   onDelete,
   onEdit
 }) {
-
   const onSelectAllClick = () => {
     const contactIds = contacts.map(contact => contact.id);
     if (selectedContactIds.length === contactIds.length) {
@@ -36,7 +35,7 @@ export default function ContactTable({
   };
 
   return (
-    <div className="w-full px-4">
+    <div className="w-full p-12">
       <table className="nui-table nui-table--checkbox nui-table--actions nui-table--hover">
         <thead>
           <tr>
@@ -51,6 +50,7 @@ export default function ContactTable({
             <th className="text-center">Department</th>
             <th className="text-center">Contact Number</th>
             <th className="text-center">Add to Basecamp</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
