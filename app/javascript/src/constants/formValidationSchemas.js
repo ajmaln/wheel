@@ -41,5 +41,20 @@ export default {
       .required("Tags is required")
       .nullable(),
     title: Yup.string().required("Title is required")
+  }),
+  newContactForm: Yup.object().shape({
+    addToBasecamp: Yup.boolean(),
+    contactNumber: Yup.string().required("Contact Number is required"),
+    department: Yup.object()
+      .shape({
+        label: Yup.string().required("Department is required"),
+        value: Yup.string().required("Department is required")
+      })
+      .required("Department is required")
+      .nullable(),
+    email: Yup.string()
+      .email("Must be a valid email address")
+      .required("Email is required"),
+    name: Yup.string().required("Name is required")
   })
 };

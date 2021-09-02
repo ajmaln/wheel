@@ -23,7 +23,7 @@ export default function NoteTable({
   onEdit
 }) {
   return (
-    <div className="w-full px-4">
+    <div className="w-full p-12">
       <table className="nui-table nui-table--checkbox nui-table--actions nui-table--hover table-fixed">
         <thead>
           <tr>
@@ -48,6 +48,7 @@ export default function NoteTable({
             <th className="text-center">Created Date</th>
             <th className="text-center">Due Date</th>
             <th className="text-center">Contact</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -72,7 +73,14 @@ export default function NoteTable({
                 />
               </td>
               <td>
-                <Button style="link" label={note.title} />
+                <Button
+                  style="link"
+                  label={
+                    <span className="text-left truncate overflow-ellipsis w-32">
+                      {note.title}
+                    </span>
+                  }
+                />
               </td>
               <td className="text-center truncate overflow-ellipsis w-32">
                 {note.description}
