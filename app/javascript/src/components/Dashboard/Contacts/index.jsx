@@ -10,9 +10,11 @@ import { useContactsDispatch, useContactsState } from "contexts/contacts";
 
 import ContactTable from "./ContactTable";
 import DeleteAlert from "./DeleteAlert";
+import NewContactPane from "./NewContactPane";
 
 const Contacts = () => {
   const [loading, setLoading] = useState(true);
+  const [showNewContactPane, setShowNewContactPane] = useState(false);
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedContactIds, setSelectedContactIds] = useState([]);
@@ -47,6 +49,7 @@ const Contacts = () => {
 
   const onEdit = contact => {
     setSelectedContact(contact);
+    setShowNewContactPane(true);
   };
 
   const onDelete = contact => {
@@ -59,6 +62,11 @@ const Contacts = () => {
     setShowDeleteAlert(false);
   };
 
+  const onFormPaneClose = () => {
+    setSelectedContact({});
+    setShowNewContactPane(false);
+  };
+
   if (loading) {
     return <PageLoader />;
   }
@@ -66,7 +74,13 @@ const Contacts = () => {
     <>
       <Header
         title="Contacts"
-        actionBlock={<Button label="Add New Contact" icon="ri-add-line" />}
+        actionBlock={
+          <Button
+            onClick={() => setShowNewContactPane(true)}
+            label="Add New Contact"
+            icon="ri-add-line"
+          />
+        }
       />
       {contacts.length ? (
         <>
@@ -109,10 +123,15 @@ const Contacts = () => {
           image={EmptyNotesList}
           title="Looks like you don't have any contacts!"
           subtitle="Add your contacts to send customized emails to them."
-          primaryAction={() => {}}
+          primaryAction={() => setShowNewContactPane(true)}
           primaryActionLabel="Add New Contact"
         />
       )}
+      <NewContactPane
+        showPane={showNewContactPane}
+        onClose={onFormPaneClose}
+        selectedContact={selectedContact}
+      />
       {showDeleteAlert && (
         <DeleteAlert
           selectedContact={selectedContact}

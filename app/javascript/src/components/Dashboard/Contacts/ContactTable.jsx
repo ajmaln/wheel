@@ -9,6 +9,7 @@ export default function ContactTable({
   onDelete,
   onEdit
 }) {
+
   const onSelectAllClick = () => {
     const contactIds = contacts.map(contact => contact.id);
     if (selectedContactIds.length === contactIds.length) {
