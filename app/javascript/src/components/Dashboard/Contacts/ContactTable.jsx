@@ -9,6 +9,32 @@ export default function ContactTable({
   onDelete,
   onEdit
 }) {
+
+  const onSelectAllClick = () => {
+    const contactIds = contacts.map(contact => contact.id);
+    if (selectedContactIds.length === contactIds.length) {
+      setSelectedContactIds([]);
+    } else {
+      setSelectedContactIds(contactIds);
+    }
+  };
+  const isSelectAllChecked =
+    selectedContactIds.length === contacts.map(contact => contact.id).length;
+
+  const handleCheckboxClick = contact => event => {
+    event.stopPropagation();
+    const index = selectedContactIds.indexOf(contact.id);
+
+    if (index > -1) {
+      setSelectedContactIds([
+        ...selectedContactIds.slice(0, index),
+        ...selectedContactIds.slice(index + 1)
+      ]);
+    } else {
+      setSelectedContactIds([...selectedContactIds, contact.id]);
+    }
+  };
+
   return (
     <div className="w-full px-4">
       <table className="nui-table nui-table--checkbox nui-table--actions nui-table--hover">
@@ -16,18 +42,8 @@ export default function ContactTable({
           <tr>
             <th>
               <Checkbox
-                checked={
-                  selectedContactIds.length ===
-                  contacts.map(contact => contact.id).length
-                }
-                onClick={() => {
-                  const contactIds = contacts.map(contact => contact.id);
-                  if (selectedContactIds.length === contactIds.length) {
-                    setSelectedContactIds([]);
-                  } else {
-                    setSelectedContactIds(contactIds);
-                  }
-                }}
+                checked={isSelectAllChecked}
+                onClick={onSelectAllClick}
               />
             </th>
             <th className="text-left">Name</th>
@@ -43,22 +59,7 @@ export default function ContactTable({
               <td>
                 <Checkbox
                   checked={selectedContactIds.includes(contact.id)}
-                  onClick={event => {
-                    event.stopPropagation();
-                    const index = selectedContactIds.indexOf(contact.id);
-
-                    if (index > -1) {
-                      setSelectedContactIds([
-                        ...selectedContactIds.slice(0, index),
-                        ...selectedContactIds.slice(index + 1)
-                      ]);
-                    } else {
-                      setSelectedContactIds([
-                        ...selectedContactIds,
-                        contact.id
-                      ]);
-                    }
-                  }}
+                  onClick={handleCheckboxClick(contact)}
                 />
               </td>
               <td className="flex items-center space-x-3">
