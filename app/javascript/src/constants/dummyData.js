@@ -45,3 +45,22 @@ export const CONTACT_OPTIONS = [
   { value: "Karthik Menon", label: "Karthik Menon" },
   { value: "Ajmal Noushad", label: "Ajmal Noushad" }
 ];
+
+export const CONTACTS = [
+  {
+    id: 1,
+    name: "Karthik Menon",
+    email: "karthik.menon@bigbinary.com",
+    contactNumber: "12345678",
+    department: "Engineering",
+    addToBasecamp: false
+  },
+  {
+    id: 2,
+    name: "Ajmal Noushad",
+    email: "ajmal.noushad@bigbinary.com",
+    contactNumber: "12345678",
+    department: "Engineering",
+    addToBasecamp: true
+  }
+];
