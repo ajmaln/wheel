@@ -74,8 +74,8 @@ export default function NewNoteForm({ onClose, selectedNote }) {
       validationSchema={formValidationSchemas.newNoteForm}
     >
       {({ isSubmitting, values }) => (
-        <Form>
-          <Input label="Title" name="title" className="mb-6" />
+        <Form className="space-y-6">
+          <Input label="Title" name="title" />
           <Select
             label="Tags"
             value={values.tags}
@@ -85,14 +85,8 @@ export default function NewNoteForm({ onClose, selectedNote }) {
             isSearchable={true}
             name="tags"
             options={TAG_OPTIONS}
-            className="mb-6"
           />
-          <Textarea
-            label="Description"
-            name="description"
-            rows={8}
-            className="mb-6"
-          />
+          <Textarea label="Description" name="description" rows={8} />
           <Select
             label="Assigned Contact"
             placeholder="Select an Option"
@@ -101,9 +95,8 @@ export default function NewNoteForm({ onClose, selectedNote }) {
             isSearchable={true}
             name="contact"
             options={CONTACT_OPTIONS}
-            className="mb-6"
           />
-          <div className="flex mb-6 justify-between">
+          <div className="flex justify-between">
             <label htmlFor="addDueDateToNote">Add Due Date to Note</label>
             <Switch name="addDueDateToNote" />
           </div>
